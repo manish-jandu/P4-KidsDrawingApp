@@ -3,6 +3,7 @@ package com.example.p4_kidsdrawingapp
 import android.content.Context
 import android.graphics.*
 import android.util.AttributeSet
+import android.util.TypedValue
 import android.view.MotionEvent
 import android.view.View
 
@@ -28,7 +29,7 @@ class DrawingView(context: Context, attrs:AttributeSet):View(context,attrs) {
         mDrawPaint!!.strokeJoin = Paint.Join.ROUND
         mDrawPaint!!.strokeCap = Paint.Cap.ROUND
         mCanvasPaint = Paint(Paint.DITHER_FLAG)
-        mBrushSize = 20.toFloat()
+        //mBrushSize = 20.toFloat()
     }
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
@@ -56,10 +57,10 @@ class DrawingView(context: Context, attrs:AttributeSet):View(context,attrs) {
         }
     }
 
-    override fun onTouchEvent(event: MotionEvent?): Boolean {
-        val touchX = event?.x
-        val touchY = event?.y
-        when(event?.action){
+    override fun onTouchEvent(event: MotionEvent): Boolean {
+        val touchX = event.x
+        val touchY = event.y
+        when(event.action){
             MotionEvent.ACTION_DOWN ->{
                 mDrawPath!!.color = color
                 mDrawPath!!.brushThickness = mBrushSize
@@ -88,8 +89,24 @@ class DrawingView(context: Context, attrs:AttributeSet):View(context,attrs) {
         return true
     }
 
+    fun setColor(newColor:String){
+        color = Color.parseColor(newColor)
+        mDrawPaint!!.color = color
+    }
+
+
     internal inner class CustomPath(var color:Int,
                                     var brushThickness:Float): Path() {
     }
+    /*
+    * fun to change size of the brush
+    * it changes brush size w.r.t. all screen sizes
+    * @param newSize: The new to size in which we want the brush
+    * */
+    fun setSizeForBrush(newSize:Float){
+    mBrushSize = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
+        newSize,resources.displayMetrics)
+    mDrawPaint!!.strokeWidth = mBrushSize
 
+    }
 }
